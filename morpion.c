@@ -12,10 +12,8 @@ void test_placer_pion();
 
 //==================================== Fonctions ====================================
 void initialisation(char plateau[N][N]){
-	int a;
-	int b;
-	for (a=0;a<N; a++){
-		for (b=0; b<N; b++){
+	for (int a=0;a<N; a++){
+		for (int b=0; b<N; b++){
 				plateau[a][b]='_';
 			}
 		}
@@ -43,20 +41,14 @@ char* demander_coordonnees(char plateau[N][N]){
 	}
 }
 
+//Fonction qui affiche le plateau
 void affichage(char plateau[N][N]){
-	int i;
-	int j;
+	printf("\n  ");
+	for (int i=0;i<N;i++)printf("%d ",i+1);
 	printf("\n");
-	printf("  ");
-	for (i=0;i<N;i++){
-	printf("%d ",i+1);
-	}
-	printf("\n");
-	for (i=0;i<N; i++){
+	for (int i=0;i<N; i++){
 		printf("%d ",i+1);
-		for (j=0; j<N; j++){
-				printf("%c ",plateau[i][j]);
-			}
+		for (int j=0; j<N; j++)printf("%c ",plateau[i][j]);
 		printf("\n");
 		}
 	printf("\n");
@@ -65,15 +57,11 @@ void affichage(char plateau[N][N]){
 int choisir_menu_12q(int* x){
 	printf("\n-------Choisissez votre mode de jeu------- \n 1 Partie à deux joueurs \n 2 Partie contre l'ordinateur \n 3 Quitter \n \n Entrez le chiffre souaithé pour continuer \n'");
 	scanf("%d",x); 
-	if (*x==1){
-	return 1;
+	if (*x!=1 && *x !=2 && *x != 3){
+		printf("\n Erreur de saisie, veuillez recommencer \n");
+		choisir_menu_12q(x);
 	}
-	if (*x==2){
-	return 2;
-	}
-	else{
-	return 0;
-	}
+	else{return *x;}
 }
 
 void jouer(char plateau[N][N], int joueur,int* c1, int* c2){
@@ -97,79 +85,58 @@ void jouer_ordinateur(char plateau[N][N], int* c1, int* c2){
 }
 
 int partie_gagnee(char plateau[N][N]){
-	int i;
-	int j;
-	int g=0;
-	for(i=0;i<N;i++){
-		if(plateau[i][i]=='X'){
-			g=1;
+//evalue si il existe une occurence de 3 signes identiques en ligne, en colomne ou en diagonal
+	//test ligne
+	int flag=0;
+	for (int i=0;i<N;i++){
+		for(int j=0;j<N-1;j++){
+			if(plateau[i][j]==plateau[i][j+1] && plateau[i][j]!='_'){
+				flag=1;
+			}
+			else{
+				flag=0;
+				break;
+			}
 		}
-		else{g=0;
-			i=N;}
-	}
-	if(g==1){printf("\nJoueur 1 a gagné\n");return g;}
-	for(i=0;i<N;i++){
-		if(plateau[i][i]=='O'){
-			g=1;
+		if(flag==1){
+			if(plateau[i][0]=='X'){printf("\n Le joueur 1 a gagné \n");}
+			else{printf("\n Le joueur 2 a gagné \n");}
+			return 1;
 		}
-		else{g=0;
-			i=N;}
 	}
-	if(g==1){printf("\nJoueur 2 a gagné\n");return g;}
-	for(i=0;i<N;i++){
-		if(plateau[(N-1)-i][i]=='X'){
-			g=1;
+	//test colonne
+	for (int i=0;i<N;i++){
+		for(int j=0;j<N-1;j++){
+			if(plateau[j][i]==plateau[j+1][i] && plateau[i][j]!='_'){
+				flag=1;
+			}
+			else{
+				flag=0;
+				break;
+			}
 		}
-		else{g=0;
-			i=N;}
-	}
-	if(g==1){printf("\nJoueur 1 a gagné\n");return g;}
-	for(i=0;i<N;i++){
-		if(plateau[N-1-i][i]=='O'){
-			g=1;
+		if(flag==1){
+			if(plateau[0][i]=='X'){printf("\n Le joueur 1 a gagné \n");}
+			else{printf("\n Le joueur 2 a gagné \n");}
+			return 1;
 		}
-		else{g=0;
-			i=N;}
 	}
-	if(g==1){printf("\nJoueur 2 a gagné\n");return g;}
-
-	for (i=0; i<N; i++){
-		for(j=0; j<N; j++){
-			if(plateau[i][j]=='O'){g=1;}
-			else{g=0;
-				j=N;}
+	//test diagonale
+	for (int i=0;i<N-1;i++){
+		if(plateau[i][i]==plateau[i+1][i+1] && plateau[i][i]!='_'){
+			flag=1;
 		}
-		if(g==1){printf("\nJoueur 2 a gagné\n");return g;}
-	}
-
-	for (i=0; i<N; i++){
-		for(j=0; j<N; j++){
-			if(plateau[i][j]=='X'){g=1;}
-			else{g=0;
-				j=N;}
+		else{
+			flag=0;
+			break;
 		}
-		if(g==1){printf("\nJoueur 1 a gagné\n");return g;}
 	}
-
-	for (j=0; j<N; j++){
-		for(i=0; i<N; i++){
-			if(plateau[i][j]=='X'){g=1;}
-			else{g=0;
-				i=N;}
-		}
-		if(g==1){return g;}
-		else{g=0;}
+	if(flag==1){
+		if(plateau[0][0]=='X'){printf("\n Le joueur 1 a gagné \n");}
+		else{printf("\n Le joueur 2 a gagné \n");}
+		return 1;
 	}
-	for (j=0; j<N; j++){
-		for(i=0; i<N; i++){
-			if(plateau[i][j]=='O'){g=1;}
-			else{g=0;
-				i=N;}
-		}
-		if(g==1){return g;}
-		else{g=0;}
-	}
-	return g;
+	return -1;
 }
 
 void joueur_a(char plateau[N][N], int nb_joueurs, int*c1, int*c2){
@@ -180,7 +147,8 @@ void joueur_a(char plateau[N][N], int nb_joueurs, int*c1, int*c2){
 		if (nb_joueurs==1){
 			jouer(plateau,0,c1,c2);
 			
-			if (partie_gagnee(plateau)!=1){jouer_ordinateur(plateau,c1,c2);
+			fgh=partie_gagnee(plateau);
+			if (fgh!=1){jouer_ordinateur(plateau,c1,c2);
 			printf("\nl'ordinateur a joué: \n'");
 			affichage(plateau);}
 			}
