@@ -8,6 +8,7 @@
 #define N 3
 //==================================== Tests Definitions ====================================
 void test_initialisation();
+void test_placer_pion();
 
 //==================================== Fonctions ====================================
 void initialisation(char plateau[N][N]){
@@ -19,6 +20,28 @@ void initialisation(char plateau[N][N]){
 			}
 		}
 	}
+
+//Fonction qui place un pion sur le plateau en fonction d'un signe et d'un buffer de coordonnées
+void placer_pion(char plateau[N][N], char signe, char* buffer){
+	plateau[buffer[0]-'0'-1][buffer[1]-'0'-1]=signe;
+}
+//Fonction qui demande au joueur les coordonnées
+char* demander_coordonnees(char plateau[N][N]){
+	char* buffer = malloc(2*sizeof(char));
+	printf("Entrez les coordonnées de votre pion sous la forme \"xy\" : ");
+	scanf("%s", buffer);
+	if(strlen(buffer)!=2 || (buffer[0]!='1' && buffer[0]!='2' && buffer[0]!='3') || (buffer[1]!='1' && buffer[1]!='2' && buffer[1]!='3') ){
+		printf("Erreur de saisie, veuillez recommencer\n");
+		demander_coordonnees(plateau);
+	}
+	else if(plateau[buffer[0]-'0'-1][buffer[1]-'0'-1]!='_'){
+		printf("Case déjà prise, veuillez recommencer\n");
+		demander_coordonnees(plateau);
+	}
+	else{
+		return buffer;
+	}
+}
 
 void affichage(char plateau[N][N]){
 	int i;
@@ -54,19 +77,11 @@ int choisir_menu_12q(int* x){
 }
 
 void jouer(char plateau[N][N], int joueur,int* c1, int* c2){
-	printf("\n Saissisez la coordonnée ligne\n");
-	scanf("%d",c1);
-	printf("\n Saissisez la coordonnée colonne\n");
-	scanf("%d",c2);
-	if (plateau[*c1-1][*c2-1]!='_'){
-	printf("\nCase déjà prise, choissisez en une autre \n");
-	jouer(plateau,joueur,c1,c2);
-	}
-	else{
-		if (joueur ==1){plateau[*c1-1][*c2-1]='O';}
-		else{plateau[*c1-1][*c2-1]='X';}	
-		affichage(plateau);
-	}
+	char signe;
+	if (joueur==0){signe='X';}
+	else{signe='O';}
+	placer_pion(plateau,signe,demander_coordonnees(plateau));
+	affichage(plateau);
 }
 
 
@@ -201,9 +216,10 @@ int main(){
 	initialisation(plateau);
 
 	CU_initialize_registry();
-    CU_pSuite suite = CU_add_suite("maxi_test", 0, 0);
+    CU_pSuite suite = CU_add_suite("Morpion Test", 0, 0);
 
-    CU_add_test(suite, "maxi_fun", test_initialisation);
+    CU_add_test(suite, "test_initialisation", test_initialisation);
+	CU_add_test(suite, "test_placer_pion", test_placer_pion);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -240,3 +256,27 @@ void test_initialisation(){
         }
     }
 }
+void test_placer_pion(){
+	char plateau[N][N];
+	initialisation(plateau);
+	char signe='X';
+	char buffer[2];
+	buffer[0]='1';
+	buffer[1]='1';
+	placer_pion(plateau,signe,buffer);
+	CU_ASSERT(plateau[0][0]=='X');
+	buffer[0]='2';
+	buffer[1]='1';
+	placer_pion(plateau,signe,buffer);
+	CU_ASSERT(plateau[1][0]=='X');
+	buffer[0]='3';
+	buffer[1]='2';
+	placer_pion(plateau,signe,buffer);
+	CU_ASSERT(plateau[2][1]=='X');
+	signe='O';
+	buffer[1]='3';
+	placer_pion(plateau,signe,buffer);
+	CU_ASSERT(plateau[2][2]=='O');
+}
+
+
