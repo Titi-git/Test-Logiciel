@@ -1,9 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <CUnit/CUnit.h>
+#include <CUnit/Basic.h>
+#include <string.h>
 
 #define N 3
+//==================================== Tests Definitions ====================================
+void test_initialisation();
 
+//==================================== Fonctions ====================================
 void initialisation(char plateau[N][N]){
 	int a;
 	int b;
@@ -193,6 +199,16 @@ int main(){
 	srand(time(NULL));
 	char plateau[N][N];
 	initialisation(plateau);
+
+	CU_initialize_registry();
+    CU_pSuite suite = CU_add_suite("maxi_test", 0, 0);
+
+    CU_add_test(suite, "maxi_fun", test_initialisation);
+
+    CU_basic_set_mode(CU_BRM_VERBOSE);
+    CU_basic_run_tests();
+    CU_cleanup_registry();
+
 	int x;
 	int c1;
 	int c2;
@@ -211,4 +227,16 @@ int main(){
 	return 0;
 }
 
+//==================================== Tests ====================================
 
+void test_initialisation(){
+	char plateau[N][N];
+	initialisation(plateau);
+    int i;
+    int j;
+    for (i=0;i<N;i++){
+        for (j=0; j<N; j++){
+            CU_ASSERT(plateau[i][j]=='_');
+        }
+    }
+}
