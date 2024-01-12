@@ -1,15 +1,17 @@
 def max_3(list):
     newlist = []
+    list_temp = list
     for i in range(3):
-        newlist.append(max(list))
-        list.remove(max(list))
+        newlist.append(max(list_temp))
+        list.remove(max(list_temp))
     return newlist
 
 def min_n(list, n):
     newlist = []
+    list_temp = list
     for i in range(n):
-        newlist.append(min(list))
-        list.remove(min(list))
+        newlist.append(min(list_temp))
+        list.remove(min(list_temp))
     return newlist
 
 def is_prime(n):
