@@ -13,6 +13,7 @@
 void test_initialisation();
 void test_placer_pion();
 void test_partie_gagnee();
+void test_joueur_suivant();
 
 //==================================== Main ====================================
 
@@ -25,6 +26,7 @@ int main(){
     CU_add_test(suite, "test_initialisation", test_initialisation);
 	CU_add_test(suite, "test_placer_pion", test_placer_pion);
 	CU_add_test(suite, "test_partie_gagnee", test_partie_gagnee);
+	CU_add_test(suite, "test_joueur_suivant", test_joueur_suivant);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -132,3 +134,9 @@ void test_partie_gagnee(){
 	CU_ASSERT(partie_gagnee(plateau)==-1);
 }
 
+void test_joueur_suivant(){
+	int joueur=1;
+	CU_ASSERT(joueur_suivant(joueur)==0);
+	joueur=0;
+	CU_ASSERT(joueur_suivant(joueur)==1);
+}
