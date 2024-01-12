@@ -1,4 +1,6 @@
 def max_3(list):
+    if list == [] or len(list) < 3:
+        return []
     newlist = []
     list_temp = list
     for i in range(3):
@@ -7,6 +9,8 @@ def max_3(list):
     return newlist
 
 def min_n(list, n):
+    if list == [] or n == 0 or n > len(list):
+        return []
     newlist = []
     list_temp = list
     for i in range(n):
@@ -24,6 +28,8 @@ def is_prime(n):
         return True
 
 def is_arithmetic(list):
+    if list == []:
+        return False
     if list[0] and list[1]:
         diff = list[1] - list[0]
         for i in range(len(list)-1):
@@ -34,6 +40,8 @@ def is_arithmetic(list):
         return False
 
 def is_geometric(list):
+    if list == []:
+        return False
     if list[0] and list[1]:
         diff = list[1] / list[0]
         for i in range(len(list)-1):
