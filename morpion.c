@@ -55,6 +55,7 @@ void affichage(char plateau[N][N]){
 	printf("\n");
 }
 
+//Fonction qui affiche le menu et renvoie le choix du joueur
 int choisir_menu_12q(int* x){
 	printf("\n-------Choisissez votre mode de jeu------- \n 1 Partie à deux joueurs \n 2 Partie contre l'ordinateur \n 3 Quitter \n \n Entrez le chiffre souaithé pour continuer \n'");
 	scanf("%d",x); 
@@ -65,20 +66,22 @@ int choisir_menu_12q(int* x){
 	else{return *x;}
 }
 
-void jouer(char plateau[N][N], int joueur,int* c1, int* c2){
+//Fonction qui permet de jouer un tour
+void jouer(char plateau[N][N], int joueur){
 	char signe;
 	if (joueur==0){signe='X';}
 	else{signe='O';}
+	printf("\n Au tour du joueur %d \n",joueur+1);
 	placer_pion(plateau,signe,demander_coordonnees(plateau));
 	affichage(plateau);
 }
 
-
-void jouer_ordinateur(char plateau[N][N], int* c1, int* c2){
+//Fonction qui permet à l'ordinateur de jouer un tour
+void jouer_ordinateur(char plateau[N][N]){
 	int a=rand()%(N);
 	int b=rand()%(N);
 	if (plateau[a][b]!='_'){
-	jouer_ordinateur(plateau,c1,c2);
+	jouer_ordinateur(plateau);
 	}
 	else{
 		plateau[a][b]='O';	
@@ -155,44 +158,51 @@ int partie_gagnee(char plateau[N][N]){
 	return -1;
 }
 
-void joueur_a(char plateau[N][N], int nb_joueurs, int*c1, int*c2){
-		int i=0;
-		int Njoueur=0;
-		int fgh=partie_gagnee(plateau);
-		while(fgh!=1){
-		if (nb_joueurs==1){
-			jouer(plateau,0,c1,c2);
-			
-			fgh=partie_gagnee(plateau);
-			if (fgh!=1){jouer_ordinateur(plateau,c1,c2);
-			printf("\nl'ordinateur a joué: \n'");
-			affichage(plateau);}
+//fonction qui permet d'evaluer si il reste de la place sur le plateau
+int evaluer(char plateau[N][N]){
+	for(int i=0;i<N;i++){
+		for(int j=0;j<N;j++){
+			if(plateau[i][j]=='_'){
+				return -1;
 			}
-		else{
-			fgh=partie_gagnee(plateau);
-			jouer(plateau,Njoueur,c1,c2);
-			}
-			if(Njoueur==0){Njoueur=1;}
-			else{Njoueur=0;}
-			fgh=partie_gagnee(plateau);
-			int a;
-			int b;
-			int kgb=0;
-			int fin=0;
-			while(kgb!=1){
-				if(fin==1){kgb=1; fgh=1;}
-				for (a=0;a<N; a++){
-					for (b=0; b<N; b++){
-							if(plateau[a][b]=='_'){kgb=1;}
-							else{fin=1;
-							}
-						}
-					}
-				}
-			}
-		
-		printf("\n La partie est terminé \n");
+		}
+	}
+	return 1;
 }
+
+//fonction qui permet de jouer une partie à deux joueurs
+void jouer_partie_multijoueur(char plateau[N][N], int nb_joueurs){
+	int joueur=0;
+	int flagfin=partie_gagnee(plateau);
+	while(flagfin!=1){
+		jouer(plateau,joueur);
+		flagfin=partie_gagnee(plateau);
+		if(flagfin==-1)flagfin=evaluer(plateau);
+		joueur++;
+		if(joueur==nb_joueurs){joueur=0;}
+	}
+	printf("\n La partie est terminé \n");
+}
+
+//fonction qui permet de jouer une partie contre l'ordinateur
+void jouer_partie_ordinateur(char plateau[N][N]){
+	int flagfin=partie_gagnee(plateau);
+	while(flagfin!=1){
+		jouer(plateau,0);
+		flagfin=partie_gagnee(plateau);
+		if(flagfin==-1)flagfin=evaluer(plateau);
+		if (flagfin!=1){
+			jouer_ordinateur(plateau);
+			printf("\nl'ordinateur a joué: \n'");
+			affichage(plateau);
+			flagfin=partie_gagnee(plateau);
+			}
+		if(flagfin==-1)flagfin=evaluer(plateau);
+	}
+	printf("\n La partie est terminé \n");
+}
+
+//==================================== Main ====================================
 
 int main(){
 	srand(time(NULL));
@@ -211,15 +221,13 @@ int main(){
     CU_cleanup_registry();
 
 	int x;
-	int c1;
-	int c2;
 	int p=choisir_menu_12q(&x);
 	if(p==1){
-			joueur_a(plateau,2,&c1,&c2);
+		jouer_partie_multijoueur(plateau,2);
 	}
 	else{
 		if(p==2){
-				joueur_a(plateau,1,&c1,&c2);
+			jouer_partie_ordinateur(plateau);
 		}
 		else{printf("\n Merci d'avoir participé \n");}
 		printf("\n");
